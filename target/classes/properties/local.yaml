@@ -1,0 +1,21 @@
+http: 
+  listener: 
+    host: "0.0.0.0"
+    port: "8083"
+  requester: 
+    customer: 
+      papi: 
+        host: "0.0.0.0"
+        pathCustomerState: "/api/customerState"
+        port: "8082"
+    verification:
+      papi:
+        host: "0.0.0.0"
+        pathVerification: "/api/verification"
+        port: "8082"
+    registration:
+      papi:
+        host: "0.0.0.0"
+        pathRegistration: "api/customers/registration"
+        port: "8082"        
+instanceID: "17815796"

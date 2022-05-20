@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="api-main">
+        <http:listener path="/api/*" config-ref="api-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="api-config"/>
+		<error-handler ref="apikit-global-errorError_Handler" />
+    </flow>
+    <flow name="api-console">
+        <http:listener path="/console/*" config-ref="api-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="api-config"/>
+		<error-handler ref="apikit-global-errorError_Handler" />
+    </flow>
+    <flow name="post:\customers\registration:application\json:api-config">
+		<flow-ref doc:name="Flow Reference To Initialize Request Data" doc:id="407a2728-eb85-41ab-a4e8-d33c3620e92d" name="initialize-request-data-subFlow"/>
+		<logger level="INFO"
+			doc:name="Start Logger For Customer Registration API"
+			doc:id="ae77aa77-bd59-4b88-90bb-876a0f116c12"
+			message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now(), &#10;    transactionId: vars.headers_var.'X-lyt-transactionId',&#10;    AppName: app.name,&#10;    FLowName: flow.name,&#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DesinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    txnState: &quot;START&quot;&#10;}]" />
+		<flow-ref
+			doc:name="Flow Reference To Call Customer Registration Implementation"
+			doc:id="8bc2a7f4-818d-4340-b9f7-775d8ed0d34d"
+			name="post-customer-registration-implementation-flow" />
+		<logger level="INFO"
+			doc:name="End Logger For Customer Registration API"
+			doc:id="b42d4b7e-9d73-40fb-bd98-939ac3894301"
+			message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now(),&#10;    transactionId: vars.headers_var.'X-lyt-transactionId',&#10;    AppName: app.name,&#10;    FlowName: flow.name,&#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DesinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    txnState: &quot;END&quot;&#10;}]" />
+		<error-handler ref="implementation-global-errorError_Handler" />
+    </flow>
+</mule>
