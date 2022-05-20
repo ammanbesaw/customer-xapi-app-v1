@@ -49,11 +49,11 @@
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com/</uri>
 						<muleVersion>${app.runtime}</muleVersion>
-						<username>${Dawittt}</username>
-						<password>${Aeiou11!}</password>
+						<username>Dawittt</username>
+						<password>Aeiou11!</password>
 						<applicationName>${project.artifactId}</applicationName>
 						<environment>dev</environment>
-						<workerType>${workerType}</workerType>
+						<workerType>Micro</workerType>
 						<workers>1</workers>
 						<objectStoreV2>true</objectStoreV2>
 						<region> ${region} </region>
